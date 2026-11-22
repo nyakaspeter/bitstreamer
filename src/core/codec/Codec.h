@@ -1,5 +1,5 @@
 // Codec-neutral encoder and bitstream-packetizer interfaces plus the registry
-// that the pipeline, CLI and GUI use to discover codecs. Nothing outside the
+// that the pipeline and the app use to discover codecs. Nothing outside the
 // codec/transport modules may assume a specific frame size, bitrate or burst
 // type: everything is queried from EncoderCapabilities / TransportDescriptor.
 #pragma once

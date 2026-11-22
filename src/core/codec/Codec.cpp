@@ -36,7 +36,7 @@ const LavcDesc& lavcDesc(CodecId id) {
     // upstream. 1411.2 kbit/s is the highest rate whose 512-sample frame still
     // fits a type-I IEC 61937 burst together with the preamble.
     static const LavcDesc dts{CodecId::Dts, "dca", "DTS Digital Surround", AV_SAMPLE_FMT_S32, true,
-                              {768000, 1411200}, 1411200,
+                              {768000, 1411200}, 768000,
                               "FFmpeg DCA core encoder (flagged experimental upstream)"};
     return id == CodecId::Ac3 ? ac3 : dts;
 }

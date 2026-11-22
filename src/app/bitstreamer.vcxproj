@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The bitstreamer desktop app (WinUI 3, unpackaged, Windows App SDK runtime
+     shipped alongside). The core library and FFmpeg are built by CMake first;
+     build.ps1 runs both steps. -->
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <RepoRoot>$(MSBuildThisFileDirectory)..\..\</RepoRoot>
+    <CorePreset Condition="'$(CorePreset)' == ''">release</CorePreset>
+    <CoreBuildDir>$(RepoRoot)build\$(CorePreset)\</CoreBuildDir>
+    <VcpkgDir>$(CoreBuildDir)vcpkg_installed\x64-windows\</VcpkgDir>
+    <Pkg>$(RepoRoot)build\packages\</Pkg>
+    <PkgAppSdk>$(Pkg)Microsoft.WindowsAppSDK.1.7.260224002\</PkgAppSdk>
+    <PkgBuildTools>$(Pkg)Microsoft.Windows.SDK.BuildTools.10.0.26100.4188\</PkgBuildTools>
+    <PkgCppWinRT>$(Pkg)Microsoft.Windows.CppWinRT.2.0.250303.1\</PkgCppWinRT>
+    <PkgWebView2>$(Pkg)Microsoft.Web.WebView2.1.0.2903.40\</PkgWebView2>
+  </PropertyGroup>
+  <Import Project="$(PkgAppSdk)build\native\Microsoft.WindowsAppSDK.props" Condition="Exists('$(PkgAppSdk)build\native\Microsoft.WindowsAppSDK.props')" />
+  <Import Project="$(PkgBuildTools)build\Microsoft.Windows.SDK.BuildTools.props" Condition="Exists('$(PkgBuildTools)build\Microsoft.Windows.SDK.BuildTools.props')" />
+  <Import Project="$(PkgCppWinRT)build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('$(PkgCppWinRT)build\native\Microsoft.Windows.CppWinRT.props')" />
+  <PropertyGroup Label="Globals">
+    <CppWinRTOptimized>true</CppWinRTOptimized>
+    <CppWinRTRootNamespaceAutoMerge>true</CppWinRTRootNamespaceAutoMerge>
+    <MinimalCoreWin>true</MinimalCoreWin>
+    <ProjectGuid>{6d2f0b7e-3c0e-4f0b-9a57-b17c5e0a4d11}</ProjectGuid>
+    <ProjectName>bitstreamer</ProjectName>
+    <RootNamespace>Bitstreamer</RootNamespace>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <MinimumVisualStudioVersion>16.0</MinimumVisualStudioVersion>
+    <AppContainerApplication>false</AppContainerApplication>
+    <AppxPackage>false</AppxPackage>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformMinVersion>10.0.19041.0</WindowsTargetPlatformMinVersion>
+    <UseWinUI>true</UseWinUI>
+    <EnableMsixTooling>true</EnableMsixTooling>
+    <WindowsPackageType>None</WindowsPackageType>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <DesktopCompatible>true</DesktopCompatible>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup>
+    <OutDir>$(RepoRoot)build\app\bin\</OutDir>
+    <IntDir>$(RepoRoot)build\app\obj\</IntDir>
+    <GeneratedFilesDir>$(RepoRoot)build\app\obj\Generated Files\</GeneratedFilesDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
+      <WarningLevel>Level4</WarningLevel>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalOptions>%(AdditionalOptions) /bigobj /utf-8</AdditionalOptions>
+      <AdditionalIncludeDirectories>$(RepoRoot)src;$(MSBuildThisFileDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;UNICODE;_UNICODE;NOMINMAX;WIN32_LEAN_AND_MEAN;DISABLE_XAML_GENERATED_MAIN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(CoreBuildDir);$(VcpkgDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>bscore.lib;avcodec.lib;avutil.lib;ole32.lib;avrt.lib;propsys.lib;advapi32.lib;shell32.lib;comctl32.lib;CoreMessaging.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Manifest Include="app.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="Layout.h" />
+    <ClInclude Include="MainWindow.h" />
+    <ClInclude Include="Settings.h" />
+    <ClInclude Include="Tray.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="MainWindow.cpp" />
+    <ClCompile Include="Settings.cpp" />
+    <ClCompile Include="Tray.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="app.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(PkgCppWinRT)build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('$(PkgCppWinRT)build\native\Microsoft.Windows.CppWinRT.targets')" />
+    <Import Project="$(PkgBuildTools)build\Microsoft.Windows.SDK.BuildTools.targets" Condition="Exists('$(PkgBuildTools)build\Microsoft.Windows.SDK.BuildTools.targets')" />
+    <Import Project="$(PkgAppSdk)build\native\Microsoft.WindowsAppSDK.targets" Condition="Exists('$(PkgAppSdk)build\native\Microsoft.WindowsAppSDK.targets')" />
+    <Import Project="$(PkgWebView2)build\native\Microsoft.Web.WebView2.targets" Condition="Exists('$(PkgWebView2)build\native\Microsoft.Web.WebView2.targets')" />
+  </ImportGroup>
+  <!-- The Windows App SDK build expects this target from Visual Studio's XAML
+       compile rules, which are a separate Visual Studio component. The app
+       has no compiled XAML (its layout is loaded at run time), so there is
+       nothing for it to do. -->
+  <Target Name="AddProcessedXamlFilesToCopyLocal" Condition="'$(XamlCppTargetsImported)' != 'true'" />
+  <!-- Files the app needs beside it: the resource index of the WinUI controls
+       (the app has no resources of its own, so theirs serves as the index)
+       and the FFmpeg libraries. -->
+  <Target Name="CopyRuntimeFiles" AfterTargets="Build">
+    <ItemGroup>
+      <FfmpegDll Include="$(VcpkgDir)bin\av*.dll" />
+    </ItemGroup>
+    <Copy SourceFiles="$(OutDir)Microsoft.UI.Xaml.Controls.pri" DestinationFiles="$(OutDir)resources.pri" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(FfmpegDll)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+  </Target>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <Error Condition="!Exists('$(PkgAppSdk)build\native\Microsoft.WindowsAppSDK.props')" Text="NuGet packages are missing. Run build.ps1, or: msbuild -t:restore -p:RestorePackagesConfig=true" />
+  </Target>
+</Project>

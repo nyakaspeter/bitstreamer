@@ -261,7 +261,7 @@ BS_TEST(dts_roundtrip) {
     CHECK(burst[8] == 0xFE && burst[9] == 0x7F && burst[10] == 0x01 && burst[11] == 0x80);
     // FFmpeg's experimental DCA encoder reproduces the LFE channel at a lower
     // level than the input when decoded with FFmpeg's own decoder; routing is
-    // verified strictly, the LFE level only loosely (see docs/DTS.md).
+    // verified strictly, the LFE level only loosely.
     roundTripChannels(CodecId::Dts, "dca", 1411200, false);
 }
 

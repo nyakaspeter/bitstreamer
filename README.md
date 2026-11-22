@@ -39,17 +39,20 @@ you pick the Steam device yourself.
 **Upmix** decides what happens to stereo sound. Real 5.1 sound is never changed.
 
 * **Off**: stereo plays on the front left and right only.
-* **Quad**: stereo is also played on the surround speakers.
-* **Virtual surround**: sound common to both channels (typically speech) moves
-  to the centre, the difference between them (ambience) to the surrounds, and
-  the low end to the subwoofer.
+* **Quad speakers**: stereo is also played on the surround speakers.
+* **Virtual surround**: the sound is split into six frequency bands and each
+  is placed on its own. Sound both channels share (typically speech) moves
+  towards the centre, sound they carry out of phase moves to the surrounds,
+  ambience is added to the surround of its own side, and the low end feeds
+  the subwoofer.
 
 The meters show what is sent to the output, after upmixing. Only outputs whose
 driver accepted Dolby Digital or DTS are listed. Only one instance runs at a
 time.
 
-**Settings** has the bitrate and the safety margin for each format, start-up
-options, and the measured latency of the running session.
+The gear button opens **Settings** beside the main column: the bitrate and the
+safety margin for each format, start-up options, and the measured latency of
+the running session. Changes apply as you make them.
 
 ## How it behaves
 
@@ -80,15 +83,21 @@ options, and the measured latency of the running session.
 ## Building
 
 Requirements: Visual Studio 2022 or newer with the *Desktop development with
-C++* workload (includes CMake, Ninja and vcpkg).
+C++* workload (includes CMake, Ninja, vcpkg and NuGet). No other Visual Studio
+component is needed.
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\build.ps1 -Test -Package
 ```
 
-The first build compiles FFmpeg and Qt through vcpkg (about 15 to 20
-minutes); later builds reuse vcpkg's cache. The app is in `build\release\bin`,
-the ZIP package in `build\release`.
+The script builds the core library and the tests with CMake, then the app
+(`src\app`, WinUI 3) with MSBuild. The first build compiles FFmpeg through
+vcpkg and downloads the Windows App SDK from NuGet; later builds reuse both.
+The app is in `build\app\bin`, the ZIP package in `build`.
+
+The app's layout is XAML that is parsed when the window opens
+(`src\app\Layout.h`), so no XAML compiler is involved. The Windows App SDK
+runtime is shipped beside the app; nothing has to be installed to run it.
 
 The automated tests need no audio hardware: they drive the encoder with a
 simulated clock and check channel routing, the bitstream format, clock-drift
@@ -96,7 +105,8 @@ handling, late-frame handling and recovery.
 
 ## License
 
-MIT for bitstreamer's own code. Bundled FFmpeg and Qt DLLs are LGPL; see
+MIT for bitstreamer's own code. The package also contains FFmpeg (LGPL) and
+Microsoft's Windows App SDK runtime (Microsoft licence, redistributable); see
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Dolby, Dolby Digital and DTS
 are trademarks of their owners; this project is not certified or endorsed by
 them.

@@ -18,7 +18,7 @@
     {
       "name": "release",
       "inherits": "base",
-      "displayName": "Release (GUI + CLI + tests)",
+      "displayName": "Release (core library and tests)",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "RelWithDebInfo"
       }
@@ -26,27 +26,17 @@
     {
       "name": "debug",
       "inherits": "base",
-      "displayName": "Debug",
+      "displayName": "Debug (core library and tests)",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
-      }
-    },
-    {
-      "name": "release-nogui",
-      "inherits": "release",
-      "displayName": "Release without the Qt GUI",
-      "cacheVariables": {
-        "BITSTREAMER_BUILD_GUI": "OFF"
       }
     }
   ],
   "buildPresets": [
     { "name": "release", "configurePreset": "release" },
-    { "name": "debug", "configurePreset": "debug" },
-    { "name": "release-nogui", "configurePreset": "release-nogui" }
+    { "name": "debug", "configurePreset": "debug" }
   ],
   "testPresets": [
-    { "name": "release", "configurePreset": "release", "output": { "outputOnFailure": true } },
-    { "name": "release-nogui", "configurePreset": "release-nogui", "output": { "outputOnFailure": true } }
+    { "name": "release", "configurePreset": "release", "output": { "outputOnFailure": true } }
   ]
 }

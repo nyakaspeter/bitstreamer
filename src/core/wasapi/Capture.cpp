@@ -120,7 +120,7 @@ public:
         const HRESULT hr = client_->Start();
         if (FAILED(hr)) { error = "capture Start: " + hrToString(hr); return false; }
         started_ = true;
-        firstPacket_ = true;
+        firstPacketNs_ = 0;
         return true;
     }
 
@@ -150,9 +150,12 @@ public:
                 now - tFirst > 1'000'000'000LL) {
                 tFirst = fallback;
             }
-            // The first packet after Start() is always flagged discontinuous.
-            bool disc = (flags & AUDCLNT_BUFFERFLAGS_DATA_DISCONTINUITY) != 0 && !firstPacket_;
-            firstPacket_ = false;
+            // While the stream is starting up, packets are flagged as not
+            // continuous (always the first one, sometimes another right after
+            // it). That is not a gap in the sound, so the flag only counts
+            // once the stream has been running for half a second.
+            if (firstPacketNs_ == 0) firstPacketNs_ = now;
+            bool disc = (flags & AUDCLNT_BUFFERFLAGS_DATA_DISCONTINUITY) != 0 && now - firstPacketNs_ > 500'000'000LL;
             const bool silent = (flags & AUDCLNT_BUFFERFLAGS_SILENT) != 0;
 
             uint32_t done = 0;
@@ -204,7 +207,7 @@ private:
     int map_[6] = {0, 1, 2, 3, 4, 5};
     double dtNs_ = 0;
     bool started_ = false;
-    bool firstPacket_ = true;
+    int64_t firstPacketNs_ = 0;  // when the first packet after Start() arrived
 };
 
 // Timer-paced silence source. It exercises the complete scheduling path

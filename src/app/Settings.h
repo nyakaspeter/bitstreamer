@@ -1,29 +1,28 @@
-// Persistent application settings (per-user registry via QSettings).
+// Persistent application settings, stored per user in the registry under
+// HKEY_CURRENT_USER\Software\bitstreamer\bitstreamer.
 #pragma once
 
-#include <QString>
+#include <string>
 
 #include "core/pipeline/Pipeline.h"
 
 // Everything that is configured separately for each format.
 struct FormatSettings {
     uint32_t bitrate = 0;
-    double marginMs = 4.0;
+    int marginMs = 4;
 
     bool operator==(const FormatSettings&) const = default;
 };
 
 struct AppSettings {
-    QString outputDeviceId;
+    std::wstring outputDeviceId;
     bs::CodecId codec = bs::CodecId::Ac3;  // format selected in the main window
 
-    // Per-format settings: defaults or values entered in Settings.
-    // Bitrate is global; the other values are stored per
-    // output device.
+    // Bitrate is global; the safety margin is stored per output device.
     FormatSettings ac3;
     FormatSettings dts;
 
-    int upmix = 0;                  // bs::UpmixMode: what to do with stereo sound
+    int upmix = 0;  // bs::UpmixMode: what to do with stereo sound
 
     bool startEncodingOnLaunch = false;
     // Make the Steam device the Windows default playback device while
@@ -40,11 +39,10 @@ struct AppSettings {
 
     void load();
     void save() const;
-    bs::PipelineConfig toConfig(bs::CodecId id) const;
-    bs::PipelineConfig toConfig() const { return toConfig(codec); }
+    bs::PipelineConfig toConfig() const;
 
-    // Tuning of both formats for the current output device.
-    void loadTuning();   // falls back to the defaults when nothing is stored
+    // Settings of both formats for the current output device.
+    void loadTuning();  // falls back to the defaults when nothing is stored
     void saveTuning() const;
 
     static void setStartWithWindows(bool enabled);

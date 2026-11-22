@@ -55,6 +55,7 @@ struct EngineStats {
     uint64_t burstsPlayed = 0;
     uint64_t underruns = 0;       // output needed data but no burst was ready
     uint64_t padFrames = 0;       // zero frames inserted because of underruns
+    uint64_t outputStalls = 0;    // the output thread was called so late that the device ran dry
     uint64_t overrunDrops = 0;    // bursts discarded to avoid stale audio
     uint64_t discontinuities = 0; // capture glitches reported by the device
     uint64_t encodeErrors = 0;
@@ -125,7 +126,7 @@ private:
     };
     struct ConsumerSnap {
         StatSummary accumulation, queue, outputDelay, submit, total, level;
-        uint64_t burstsPlayed, underruns, padFrames;
+        uint64_t burstsPlayed, underruns, padFrames, outputStalls;
     };
 
     void encodeFrame(int64_t tNowNs);
@@ -188,7 +189,8 @@ private:
     uint32_t consumerEpoch_ = 0;
     int64_t lastConsumerPublishNs_ = 0;
     Histogram hAccum_, hQueue_, hOutDelay_, hSubmit_, hTotal_, hLevel_;
-    uint64_t burstsPlayed_ = 0, underruns_ = 0, padFrames_ = 0;
+    uint64_t burstsPlayed_ = 0, underruns_ = 0, padFrames_ = 0, outputStalls_ = 0;
+    int64_t lastRenderNs_ = 0;   // consumer thread: time of the previous render() call
 };
 
 }  // namespace bs

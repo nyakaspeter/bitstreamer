@@ -245,8 +245,17 @@ void BitstreamEngine::render(uint8_t* dst, uint32_t frames, int64_t tNowNs, int6
     if (epoch != consumerEpoch_) {
         consumerEpoch_ = epoch;
         hAccum_.reset(); hQueue_.reset(); hOutDelay_.reset(); hSubmit_.reset(); hTotal_.reset(); hLevel_.reset();
-        burstsPlayed_ = underruns_ = padFrames_ = 0;
+        burstsPlayed_ = underruns_ = padFrames_ = outputStalls_ = 0;
     }
+
+    // The device asks for one period of data per call. If a call comes a whole
+    // period late, the device had nothing to send in between: the receiver saw
+    // a break in the bitstream, whatever is in the queue here. (Calls that
+    // share a timestamp are a sink catching up and are not a stall.)
+    if (streamStarted_ && lastRenderNs_ != 0 && tNowNs > lastRenderNs_ &&
+        static_cast<double>(tNowNs - lastRenderNs_) > 2.0 * frames * dtNs_)
+        ++outputStalls_;
+    lastRenderNs_ = tNowNs;
 
     uint32_t tail = tail_.load(std::memory_order_acquire);
     if (streamStarted_) {
@@ -345,6 +354,7 @@ void BitstreamEngine::publishConsumer() {
     s.burstsPlayed = burstsPlayed_;
     s.underruns = underruns_;
     s.padFrames = padFrames_;
+    s.outputStalls = outputStalls_;
     consumerSnap_.write(s);
 }
 
@@ -368,6 +378,7 @@ EngineStats BitstreamEngine::stats() const {
     s.burstsPlayed = c.burstsPlayed;
     s.underruns = c.underruns;
     s.padFrames = c.padFrames;
+    s.outputStalls = c.outputStalls;
     s.resampleAdjustPpm = p.adjustPpm;
     s.driftEstimatePpm = p.integPpm;
     s.minHeadroomFrames = p.minHeadroom;
