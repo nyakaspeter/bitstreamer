@@ -6,7 +6,7 @@ Digital (AC-3) or DTS and sends the bitstream to an HDMI, DisplayPort or
 S/PDIF output that accepts it. A software replacement for Dolby Digital Live
 and DTS Connect, built for low latency.
 
-![main window](docs/screenshot.png)
+<img src="docs/screenshot.png" alt="The bitstreamer window while encoding, with the settings pane open" width="800">
 
 ## Requirements
 
@@ -106,7 +106,8 @@ handling, late-frame handling and recovery.
 ## License
 
 MIT for bitstreamer's own code. The package also contains FFmpeg (LGPL) and
-Microsoft's Windows App SDK runtime (Microsoft licence, redistributable); see
+Microsoft's Windows App SDK and Visual C++ runtimes (Microsoft licences,
+redistributable); see
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Dolby, Dolby Digital and DTS
 are trademarks of their owners; this project is not certified or endorsed by
 them.

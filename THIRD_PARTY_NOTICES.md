@@ -8,6 +8,7 @@ DLLs.
 |---|---|---|---|
 | FFmpeg (libavcodec, libavutil) | `avcodec-*.dll`, `avutil-*.dll` | LGPL-2.1-or-later | https://ffmpeg.org |
 | Windows App SDK 1.7 runtime (WinUI 3) | `Microsoft.*.dll`, `WinUI*.dll`, other runtime files and language folders | Microsoft Software License Terms (not open source; redistribution with an application is permitted) | https://github.com/microsoft/WindowsAppSDK |
+| Visual C++ runtime | `msvcp140.dll`, `vcruntime140.dll`, `vcruntime140_1.dll` | Microsoft Visual Studio licence terms (not open source; redistribution with an application is permitted) | https://visualstudio.microsoft.com |
 
 ## FFmpeg (LGPL)
 

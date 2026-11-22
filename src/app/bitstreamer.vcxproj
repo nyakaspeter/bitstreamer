@@ -124,14 +124,25 @@
        nothing for it to do. -->
   <Target Name="AddProcessedXamlFilesToCopyLocal" Condition="'$(XamlCppTargetsImported)' != 'true'" />
   <!-- Files the app needs beside it: the resource index of the WinUI controls
-       (the app has no resources of its own, so theirs serves as the index)
-       and the FFmpeg libraries. -->
+       (the app has no resources of its own, so theirs serves as the index),
+       the FFmpeg libraries and the Visual C++ runtime. -->
   <Target Name="CopyRuntimeFiles" AfterTargets="Build">
     <ItemGroup>
       <FfmpegDll Include="$(VcpkgDir)bin\av*.dll" />
     </ItemGroup>
     <Copy SourceFiles="$(OutDir)Microsoft.UI.Xaml.Controls.pri" DestinationFiles="$(OutDir)resources.pri" SkipUnchangedFiles="true" />
     <Copy SourceFiles="@(FfmpegDll)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+    <!-- The Visual C++ runtime the app and FFmpeg are built against, so the
+         app starts on a PC where it has never been installed. -->
+    <PropertyGroup>
+      <VcRedistDir Condition="'$(VCToolsRedistDir)' != ''">$(VCToolsRedistDir)x64\Microsoft.VC*.CRT\</VcRedistDir>
+      <VcRedistDir Condition="'$(VcRedistDir)' == ''">$(VCInstallDir)Redist\MSVC\*\x64\Microsoft.VC*.CRT\</VcRedistDir>
+    </PropertyGroup>
+    <ItemGroup>
+      <VcRuntimeDll Include="$(VcRedistDir)msvcp140.dll;$(VcRedistDir)vcruntime140.dll;$(VcRedistDir)vcruntime140_1.dll" />
+    </ItemGroup>
+    <Error Condition="'@(VcRuntimeDll)' == ''" Text="The Visual C++ runtime files were not found (looked in $(VcRedistDir))." />
+    <Copy SourceFiles="@(VcRuntimeDll)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
   </Target>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <Error Condition="!Exists('$(PkgAppSdk)build\native\Microsoft.WindowsAppSDK.props')" Text="NuGet packages are missing. Run build.ps1, or: msbuild -t:restore -p:RestorePackagesConfig=true" />
