@@ -1,0 +1,31 @@
+{
+  "name": "bitstreamer",
+  "version-string": "0.1.0",
+  "description": "Ultra-low-latency real-time surround encoder (AC-3 over IEC 61937) for Windows",
+  "license": "MIT",
+  "dependencies": [
+    {
+      "name": "ffmpeg",
+      "default-features": false,
+      "features": [
+        "avcodec"
+      ]
+    }
+  ],
+  "features": {
+    "gui": {
+      "description": "Qt 6 Widgets desktop GUI",
+      "dependencies": [
+        {
+          "name": "qtbase",
+          "default-features": false,
+          "features": [
+            "gui",
+            "widgets"
+          ]
+        }
+      ]
+    }
+  },
+  "builtin-baseline": "b94b6bdc326c0faea9070b4862e0e0d4e4ac5396"
+}
